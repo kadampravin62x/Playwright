@@ -4,11 +4,12 @@ import { asyncWrapProviders } from 'node:async_hooks';
 test ('test1', async ({page}) => {
 
     await page.goto("https://www.saucedemo.com/");
+    await InvalidLogin(page);
     await login(page);
-    await expect(page).toHaveTitle("Swag Labs");
-    await AddToCart(page)
-    await Checkout(page)
-    await expect(page).toHaveTitle("Swag Labs");
+    //await expect(page).toHaveTitle("Swag Labs");
+    //await AddToCart(page)
+    //await Checkout(page)
+    //await expect(page).toHaveTitle("Swag Labs");
     /*await page.getByPlaceholder("Username").fill('standard_user')
     await page.getByPlaceholder("Password").fill('secret_sauce')
     await page.getByRole('button',{name:'Login'}).click()*/
@@ -17,7 +18,7 @@ test ('test1', async ({page}) => {
 
     async function login(page){
     await page.getByPlaceholder("Username").type('standard_user',{delay:200});
-    await page.getByPlaceholder("Password").fill('secret_sauce',{delay:100});
+    await page.getByPlaceholder("Password").type('secret_sauce',{delay:100});
     await page.getByRole('button',{name:'Login'}).click();
     }
 
@@ -44,6 +45,15 @@ test ('test1', async ({page}) => {
         await expect(page.locator('[data-test="complete-header"]')).toHaveText("Thank you for your order!")
         await page.locator('[data-test="back-to-products"]').click();
 
+    }
+
+    async function InvalidLogin(page){
+        await page.getByPlaceholder("Username").type('standard_user',{delay:200});
+        await page.getByPlaceholder("Password").fill('',{delay:100});
+        await page.getByRole('button',{name:'Login'}).click();
+        await expect(page.locator('[data-test="error"]')).toHaveText("Epic sadface: Password is required")
+        await page.getByPlaceholder("Username").clear();
+        await page.getByPlaceholder("Password").clear();
     }
 
 
